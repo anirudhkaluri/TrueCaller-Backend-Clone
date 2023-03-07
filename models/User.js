@@ -1,0 +1,31 @@
+module.exports=(sequelize,DataTypes)=>{
+    const User=sequelize.define("User",{
+        user_id:{
+            type:DataTypes.INTEGER,
+            primaryKey:true,
+            autoIncrement:true,
+        },
+        name:{
+            type:DataTypes.STRING,
+            allowNull:false,
+            validate:{
+                notEmpty:true
+            }
+        },
+        phone:{
+            type:DataTypes.STRING(10),
+            allowNull:false,
+            unique:true,
+            validate:{
+                notEmpty:true,
+                isNumeric:true,
+                len:[10,10]
+            }
+        },
+        email:{
+            type:DataTypes.STRING,
+            allowNull:true,
+        }
+    });
+    return User;
+}
