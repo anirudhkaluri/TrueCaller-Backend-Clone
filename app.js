@@ -8,6 +8,7 @@ const cookieParser=require('cookie-parser');
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
+const {populate_all_data}=require('./Data/populateData');
 
 app.use(cors({
     origin: [
@@ -37,7 +38,8 @@ app.use("/spamService",spamRoutes);
 const PORT= process.env.PORT||8000; 
 
 db.sequelize.sync()
-.then((res)=>{
+.then(async (res)=>{
+    const str=await populate_all_data();
     app.listen(PORT,()=>{
         console.log(`listening to PORT=${PORT}`);
     });

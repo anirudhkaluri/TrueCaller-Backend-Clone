@@ -13,7 +13,7 @@ router.get('/searchName/:name',search_controller.search_with_name);
 
 //Routing to search with a phone number
 
-router.get('/searchPhone/:phone')
+router.get('/searchPhone/:phone',search_controller.search_with_number);
 
 
 module.exports=router;

@@ -1,7 +1,10 @@
 
-const {userExists,add_new_user,getPhone,getUser}=require('../Dao/userDao');
+const {userExists,add_new_user,getPhone,getUser,getRegisteredUsersCount}=require('../Dao/userDao');
 const {isInContacts}=require('../Dao/contactsDao');
 const {getSavedPassword}=require('../Dao/credentialDao');
+const {spam_liklihood_calculator}=require('./searchService');
+const {getSpamHits}=require('../Dao/spamDao');
+
 const bcrypt=require('bcrypt');
 
 
@@ -46,18 +49,24 @@ const register_user=async (req,res)=>{
 
 //RETRIEVING A USER
 
-const get_user=(req,res)=>{
-    const userid_person_searched=req.params.user_id;
-    const userid_person_searching=req.cookies.userid;
+const get_user=async (req,res)=>{
+    const userid_of_person_searched=req.params.user_id;
+    const userid_of_person_searching=req.cookies.userid;
+    console.log("THE COOKIE IS======",req.cookies.userid);
+    let json_response;
+    const phone_of_person_searching=await getPhone(userid_of_person_searching); 
+    const is_user_in_contacts= await isInContacts(userid_of_person_searched,phone_of_person_searching); 
+    const user_being_searched=await getUser(userid_of_person_searched); 
 
-    const phone_person_searching=getPhone(userid_person_searching); 
-    const is_user_in_contacts= isInContacts(person_searched_userid,person_searching_phone); 
-    const user_being_searched=getUser(userid_person_searched); 
+    const spam_data=await getSpamHits(user_being_searched.phone);
+    const total_registered_users=await getRegisteredUsersCount();
+    const spam_liklihood=spam_liklihood_calculator(spam_data.spam_hits,spam_data.spammers_count,total_registered_users);
+
     if(is_user_in_contacts===false)
-        delete user_being_searched.email;
-
-    const  json_response=user_being_searched;       
-    res.JSON(json_response);
+        json_response={"name":user_being_searched.name,"phone":user_being_searched.phone,"spam_liklihood":spam_liklihood};
+    else
+        json_response={"name":user_being_searched.name,"phone":user_being_searched.phone,"email":user_being_searched.email,"spam_liklihood":spam_liklihood};       
+    res.json(json_response);
 
 }
 
@@ -91,9 +100,8 @@ const login_user=async (req,res)=>{
             }
             else{
                 response_text="You have entered incorrect password";
-            }
-               
-        })
+            }       
+        });            
     }
     else
         response_text="Please register before you can login";
