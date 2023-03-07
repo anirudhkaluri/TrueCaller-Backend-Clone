@@ -1,5 +1,6 @@
 
-const {userExists,add_new_user}=require('../Dao/userDao');
+const {userExists,add_new_user,getPhone,getUser}=require('../Dao/userDao');
+const {isInContacts}=require('../Dao/contactsDao');
 const {bcrypt}=require('bcrypt');
 
 
@@ -54,12 +55,11 @@ const get_user=(req,res)=>{
     const user_being_searched=getUser(userid_person_searched); //TO DO IN DAO
     if(is_user_in_contacts===false)
         delete user_being_searched.email;
-        
+
     const  json_response=user_being_searched;       
     res.JSON(json_response);
 
 }
-
 
 
 //LOGGING IN A USER
