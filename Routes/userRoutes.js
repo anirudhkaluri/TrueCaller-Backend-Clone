@@ -8,6 +8,10 @@ const profile_controller=require('../Services/profileService');
 
 router.post('/registerUser',profile_controller.register_user);
 
+
+//Login route
+router.post('/loginUser',profile_controller.login_user);
+
 //Routing to get all details including mail-id when clicked on a search result
 
 router.get('/getUser/:user_id',profile_controller.get_user);
