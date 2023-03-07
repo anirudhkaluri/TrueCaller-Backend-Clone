@@ -2,7 +2,10 @@ const db=require('./models');
 const express=require("express");
 const app=express();
 
-//const apiRoutes=require("./Routes/apiRoutes");
+//const apiRoutes=require("./apiRouttes");
+
+
+
 //app.use(apiRoutes);
 
 app.use(express.json());
