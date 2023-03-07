@@ -11,11 +11,10 @@ const bcrypt=require('bcrypt');
 const register_user=async (req,res)=>{
 
     const user_details=req.body;
-    console.log("THE USER DETAILS ARE AS FOLLOWS",user_details);
+    
     var response_text="";
-    const user_present = userExists(user_details.phone);
-    if(user_present.status===false){ 
-        console.log("PHONE NUMBER DOESNT EXIST");
+    const user = await userExists(user_details.phone);
+    if(user===null){ 
         var mail=null;
         if(user_details.hasOwnProperty('email') && user_details.email!==null)
             mail=user_details.email;
@@ -26,7 +25,6 @@ const register_user=async (req,res)=>{
                 email:mail,
                 password:user_details.password
             });
-            console.log('USER ID IS',created_user.user_id);
             res.cookie('userid',created_user.user_id,{
                 httpOnly:true,
                 sameSite:'None',
@@ -72,13 +70,11 @@ const login_user=async (req,res)=>{
     const user_entered_credentials=req.body;
     const user_entered_password=user_entered_credentials.password;
     const user_phone=user_entered_credentials.phone;
-    const user_present=await userExists(user_phone);
-    let cook_val;
+    const user=await userExists(user_phone);
     var response_text="";
-    console.log("USER PRESENT OBJECT IS"+user_present);
-    if(user_present.status===true){
-        const hashed_password=await getSavedPassword(user_present.user_id);
-        cook_val=user_present.user_id;
+    if(user!==null){
+        const hashed_password=await getSavedPassword(user.user_id);
+
         bcrypt.compare(user_entered_password,hashed_password,(err,result)=>{
             if(err){
                 console.log('error while comparing passwords',err);

@@ -9,18 +9,14 @@ const sequelize=new Sequelize('global_database','root','root',{
 const userExists=async (phoneNumber)=>{
     try{    
         const user=await User.findOne({where:{phone:phoneNumber}}); 
-        if(user){
-            console.log("THE USER IS "+user);
-            console.log("THE USER ID IS"+user.user_id);
-            return {status:true,user_id:user.user_id};  
-        }
-              
+
+        return user;          
     }
     catch(error){
         console.log('error while checking if phone number already exists');
         throw error;
     }
-    return {status:false};
+    return null;
 }
 
 
