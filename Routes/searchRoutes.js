@@ -13,11 +13,11 @@ const search_controller=require('../Services/searchService');
 
 //Routing to search with a name
 
-router.get('/searchService/searchName/:name',search_controller.search_with_name);
+router.get('/searchName/:name',search_controller.search_with_name);
 
 //Routing to search with a phone number
 
-router.get('/searchService/searchPhone/:phone')
+router.get('/searchPhone/:phone')
 
 
 module.exports=router;

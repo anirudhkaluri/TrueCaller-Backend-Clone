@@ -2,11 +2,18 @@ const db=require('./models');
 const express=require("express");
 const app=express();
 
-//const apiRoutes=require("./apiRouttes");
+
+//import the route files
+const searchRoutes=require("./Routes/searchRoutes");
+const spamRoutes=require("./Routes/spamRoutes");
+const userRoutes=require("./Routes/userRoutes");
+
+//configure the routes by scoping them
+app.use("/profileService",userRoutes);
+app.use("/searchService",searchRoutes);
+app.use("/spamService",spamRoutes);
 
 
-
-//app.use(apiRoutes);
 
 app.use(express.json());
 app.use(express.urlencoded());
