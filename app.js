@@ -2,20 +2,22 @@ const db=require('./models');
 const express=require("express");
 const app=express();
 const session=require('express-session');
+const cors=require('cors');
 
 const cookieParser=require('cookie-parser');
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
 
+app.use(cors({
+    origin: [
+    ],
+    credentials:true
+  }));
+
 const secretKey=process.env.SESSION_SECRET || '0123456';
 
-app.use(session({
-    secret: secretKey, //transfer this to config file //Or set environmental variable
-    reseave:false,
-    saveUninitialized:false
 
-}));
 
 //import the route files
 const searchRoutes=require("./Routes/searchRoutes");
