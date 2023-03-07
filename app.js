@@ -3,6 +3,10 @@ const express=require("express");
 const app=express();
 
 
+app.use(express.json());
+app.use(express.urlencoded());
+
+
 //import the route files
 const searchRoutes=require("./Routes/searchRoutes");
 const spamRoutes=require("./Routes/spamRoutes");
@@ -13,10 +17,6 @@ app.use("/profileService",userRoutes);
 app.use("/searchService",searchRoutes);
 app.use("/spamService",spamRoutes);
 
-
-
-app.use(express.json());
-app.use(express.urlencoded());
 
 
 

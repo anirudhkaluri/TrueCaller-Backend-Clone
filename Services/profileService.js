@@ -1,11 +1,14 @@
 const {User}=require('../models');
 const {userExists,add_new_user}=require('../Dao/userDao');
 
-const register_user=(req,res)=>{
+const register_user= (req,res)=>{
 
     const user_details=req.body;
+    console.log("THE USER DETAILS ARE AS FOLLOWS",user_details);
     var response_text="";
-    if(!userExists(user_details.phone)){ 
+    const phone_exists = userExists(user_details.phone);
+    if(phone_exists){ 
+        console.log("PHONE NUMBER DOESNT EXIST");
         var mail=null;
         if(user_details.hasOwnProperty('email') && user_details.email!==null)
             mail=user_details.email;
