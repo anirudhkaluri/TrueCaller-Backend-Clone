@@ -80,33 +80,26 @@ const login_user=async (req,res)=>{
     const user_entered_password=user_entered_credentials.password;
     const user_phone=user_entered_credentials.phone;
     const user=await userExists(user_phone);
-    var response_text="";
+    res.clearCookie('userid');
+    var res_text="";
     if(user!==null){
         const hashed_password=await getSavedPassword(user.user_id);
-
-        bcrypt.compare(user_entered_password,hashed_password,(err,result)=>{
-            if(err){
-                console.log('error while comparing passwords',err);
-                response_text="Internal error";
-            }
-            else if(result===true){
-                response_text="You have successfully logged in";
-                res.cookie('userid',cook_val,{
-                    httpOnly:true,
-                    sameSite:'None',
-                    secure:false,
-                    maxAge:60000000
-                });  
-            }
-            else{
-                response_text="You have entered incorrect password";
-            }       
-        });            
+        const result=bcrypt.compareSync(user_entered_password,hashed_password);
+        if(result){
+            res_text="You have successfully logged in";
+            res.cookie('userid',user.user_id,{
+                httpOnly:true,
+                sameSite:'None',
+                secure:false,
+                maxAge:60000000
+            });  
+        }
+        else
+             res_text="You have entered incorrect password";          
     }
     else
-        response_text="Please register before you can login";
-    res.send(response_text);
-
+        res_text="Please register before you can login";
+    res.send(res_text);
 }
 
 module.exports={

@@ -5,6 +5,9 @@ const {getSpamHits}=require('../Dao/spamDao');
 
 const search_with_name=(req,res)=>{
     const search_term=req.params.name;
+    const user_table_entries=search_in_user_table(search_term);
+    const contact_table_entries=search_in_contact_table(search_term);
+    
 
 }
 
@@ -27,7 +30,6 @@ const search_with_number=async (req,res)=>{
         response_data=users_array;
     }
     else{
-        delete user.email;
         const spam_data=await getSpamHits(user.phone);
         const spam_liklihood=spam_liklihood_calculator(spam_data.spam_hits,spam_data.spammers_count,total_registered_users);
         response_data={"name":user.name,"phone":user.phone,"spam_liklihood":spam_liklihood};
