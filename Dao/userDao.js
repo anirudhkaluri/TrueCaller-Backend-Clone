@@ -52,10 +52,16 @@ const getUser=async (user_id)=>{
 
 }
 
+const getRegisteredUsersCount=async ()=>{
+    const count=await User.count();
+    return count;
+}
+
 
 module.exports={
     userExists,
     add_new_user,
     getPhone,
-    getUser
+    getUser,
+    getRegisteredUsersCount
 }
