@@ -18,7 +18,6 @@ module.exports=(sequelize,DataTypes)=>{
         phone:{
             type:DataTypes.STRING(10),
             allowNull:false,
-            unique:true,
             validate:{
                 notEmpty:true,
                 isNumeric:true,
