@@ -1,16 +1,16 @@
 const {User}=require('../models');
-
+const {userExists,add_new_user}=require('../Dao/userDao');
 
 const register_user=(req,res)=>{
 
     const user_details=req.body;
     var response_text="";
-    if(!userExists(user_details.phone)){ //TO DO IN DAO
+    if(!userExists(user_details.phone)){ 
         var mail=null;
         if(user_details.hasOwnProperty('email') && user_details.email!==null)
             mail=user_details.email;
         try{    
-            add_new_user({ //TO DO IN DAO
+            add_new_user({ 
                 name:user_details.name,
                 phone:user_details.phone,
                 email:mail,
