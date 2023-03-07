@@ -39,7 +39,23 @@ const add_new_user=async (new_user_details)=>{
         
 }
 
+const getPhone=async (user_id)=>{
+    const user=await User.findByPk(user_id);
+    return user.phone;
+}
+
+const getUser=async (user_id)=>{
+
+    const user=await User.findByPk(user_id);
+    return user;
+
+}
+
+
 module.exports={
     userExists,
-    add_new_user
+    add_new_user,
+    getPhone,
+    isInContacts,
+    getUser
 }
