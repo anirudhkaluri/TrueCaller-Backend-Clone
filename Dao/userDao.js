@@ -16,7 +16,7 @@ const userExists=async (phoneNumber)=>{
 
 
 
-const add_new_user=(new_user_details)=>{
+const add_new_user=async (new_user_details)=>{
     const new_user_password=new_user_details.password;
     delete new_user_details.password;
     try{
