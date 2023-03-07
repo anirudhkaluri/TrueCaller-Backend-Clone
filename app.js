@@ -11,11 +11,12 @@ app.use(cookieParser());
 
 app.use(cors({
     origin: [
+
     ],
     credentials:true
   }));
 
-const secretKey=process.env.SESSION_SECRET || '0123456';
+
 
 
 
