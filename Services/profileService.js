@@ -2,6 +2,10 @@
 const {userExists,add_new_user}=require('../Dao/userDao');
 const {bcrypt}=require('bcrypt');
 
+
+
+//REGISTERING A USER
+
 const register_user= (req,res)=>{
 
     const user_details=req.body;
@@ -39,11 +43,26 @@ const register_user= (req,res)=>{
 
 }
 
-const get_user=(req,res)=>{
-    const person_searched_userid=req.params.user_id;
+//RETRIEVING A USER
 
+const get_user=(req,res)=>{
+    const userid_person_searched=req.params.user_id;
+    const userid_person_searching=req.cookies.userid;
+
+    const phone_person_searching=getPhone(userid_person_searching); //TO DO IN DAO
+    const is_user_in_contacts= isInContacts(person_searched_userid,person_searching_phone); //TO DO IN DAO
+    const user_being_searched=getUser(userid_person_searched); //TO DO IN DAO
+    if(is_user_in_contacts===false)
+        delete user_being_searched.email;
+        
+    const  json_response=user_being_searched;       
+    res.JSON(json_response);
 
 }
+
+
+
+//LOGGING IN A USER
 
 
 const login_user=(req,res)=>{
