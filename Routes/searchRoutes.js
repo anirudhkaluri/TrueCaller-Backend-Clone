@@ -7,10 +7,6 @@ const router=express.Router();
 const search_controller=require('../Services/searchService');
 
 
-
-
-
-
 //Routing to search with a name
 
 router.get('/searchName/:name',search_controller.search_with_name);
