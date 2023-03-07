@@ -1,8 +1,8 @@
 const User=require('../models');
 
-const userExists=async (phone)=>{
+const userExists=async (phoneNumber)=>{
     try{    
-        const user=await User.findOne({where:{phone:phone}});
+        const user=await User.findOne({where:{phone:phoneNumber}});
       
     }
     catch(error){
@@ -14,11 +14,16 @@ const userExists=async (phone)=>{
     return false;
 }
 
-const add_new_user=(user){
+const add_new_user=(user)=>{
     try{
         User.create(user);
     }
     catch(error){
         throw error;
     }
+}
+
+module.exports={
+    userExists,
+    add_new_user
 }
