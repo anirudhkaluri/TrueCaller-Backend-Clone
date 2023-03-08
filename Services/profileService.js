@@ -49,23 +49,25 @@ const register_user=async (req,res)=>{
 
 //RETRIEVING A USER
 
-const get_user=async (req,res)=>{
-    const userid_of_person_searched=req.params.user_id;
+const get_user_with_email=async (req,res)=>{
+    const cookieExists = req.cookies.userid !== undefined;
+    if(!cookieExists)
+        return res.send("Please login first");
+
+    const user_search_result=req.body;
     const userid_of_person_searching=req.cookies.userid;
-    console.log("THE COOKIE IS======",req.cookies.userid);
     let json_response;
+
+    const searchedUser=await userExists(user_search_result.phone);
     const phone_of_person_searching=await getPhone(userid_of_person_searching); 
-    const is_user_in_contacts= await isInContacts(userid_of_person_searched,phone_of_person_searching); 
-    const user_being_searched=await getUser(userid_of_person_searched); 
-
-    const spam_data=await getSpamHits(user_being_searched.phone);
-    const total_registered_users=await getRegisteredUsersCount();
-    const spam_liklihood=spam_liklihood_calculator(spam_data.spam_hits,spam_data.spammers_count,total_registered_users);
-
-    if(is_user_in_contacts===false)
-        json_response={"name":user_being_searched.name,"phone":user_being_searched.phone,"spam_liklihood":spam_liklihood};
+    const is_user_in_contacts= await isInContacts(userid_of_person_searched,phone_of_person_searching);
+  
+    if(searchedUser && is_user_in_contacts){
+        json_response={"name":searchedUser.name,"phone":searchedUser.phone,"spam_liklihood":user_search_result.spam_liklihood,"email":searchedUser.email};
+    }
     else
-        json_response={"name":user_being_searched.name,"phone":user_being_searched.phone,"email":user_being_searched.email,"spam_liklihood":spam_liklihood};       
+    json_response={"name":searchedUser.name,"phone":searchedUser.phone,"spam_liklihood":user_search_result.spam_liklihood};
+      
     res.json(json_response);
 
 }
@@ -104,6 +106,6 @@ const login_user=async (req,res)=>{
 
 module.exports={
     register_user,
-    get_user,
+    get_user_with_email,
     login_user
 }

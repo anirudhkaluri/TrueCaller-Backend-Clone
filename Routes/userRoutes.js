@@ -14,7 +14,7 @@ router.post('/loginUser',profile_controller.login_user);
 
 //Routing to get all details including mail-id when clicked on a search result
 
-router.get('/getUser/:user_id',profile_controller.get_user);
+router.post('/getUser/:phone',profile_controller.get_user_with_email);
 
 
 module.exports=router;
