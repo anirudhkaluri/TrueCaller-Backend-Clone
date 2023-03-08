@@ -49,7 +49,7 @@ const register_user=async (req,res)=>{
 
 //RETRIEVING A USER
 
-const get_user_with_email=async (req,res)=>{
+const get_user_along_with_email=async (req,res)=>{
     const cookieExists = req.cookies.userid !== undefined;
     if(!cookieExists)
         return res.send("Please login first");
@@ -60,10 +60,12 @@ const get_user_with_email=async (req,res)=>{
 
     const searchedUser=await userExists(user_search_result.phone);
     const phone_of_person_searching=await getPhone(userid_of_person_searching); 
-    const is_user_in_contacts= await isInContacts(userid_of_person_searched,phone_of_person_searching);
+    
   
-    if(searchedUser && is_user_in_contacts){
-        json_response={"name":searchedUser.name,"phone":searchedUser.phone,"spam_liklihood":user_search_result.spam_liklihood,"email":searchedUser.email};
+    if(searchedUser){
+        const is_user_in_contacts= await isInContacts(searchedUser.user_id,phone_of_person_searching);
+        if(is_user_in_contacts===true)
+            json_response={"name":searchedUser.name,"phone":searchedUser.phone,"spam_liklihood":user_search_result.spam_liklihood,"email":searchedUser.email};
     }
     else
     json_response={"name":searchedUser.name,"phone":searchedUser.phone,"spam_liklihood":user_search_result.spam_liklihood};
@@ -104,8 +106,15 @@ const login_user=async (req,res)=>{
     res.send(res_text);
 }
 
+//logout user
+const logout_user=(req,res)=>{
+    res.clearCookie('userid');
+    res.send("Please login to continue");
+}
+
 module.exports={
     register_user,
-    get_user_with_email,
-    login_user
+    get_user_along_with_email,
+    login_user,
+    logout_user
 }
