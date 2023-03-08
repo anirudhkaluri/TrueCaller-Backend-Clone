@@ -1,4 +1,5 @@
 const {User,Credential}=require('../models');
+const {Op}=require('sequelize');
 
 const {Sequelize}=require('sequelize');
 const sequelize=new Sequelize('global_database','root','root',{
@@ -53,8 +54,25 @@ const getUser=async (user_id)=>{
 }
 
 const getRegisteredUsersCount=async ()=>{
+
     const count=await User.count();
     return count;
+
+}
+
+const search_name_in_users=async(search_term)=>{
+
+    const user_table_entries=await User.findAll({
+        where:{
+            name:{
+                [Op.like]:`%${search_term}%`
+            }
+        },
+        attributes:{
+            exclude:['user_id','email','createdAt','updatedAt']
+        }
+    });
+    return user_table_entries;
 }
 
 
@@ -63,5 +81,6 @@ module.exports={
     add_new_user,
     getPhone,
     getUser,
-    getRegisteredUsersCount
+    getRegisteredUsersCount,
+    search_name_in_users
 }
