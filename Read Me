@@ -1,4 +1,4 @@
-Refer to Documentation.pdf for crisp, detailed and structured description of project files along with Postman screenshots.
+
 
 TECH STACK USED
 
@@ -9,10 +9,17 @@ TECH STACK USED
 
 RUNNING THE PROJECT:
 
-1) Go to the official Node.js website: https://nodejs.org and install NodeJS
-2) Navigate to instahyreAPIs directory in command line
+1) Go to the official Node.js website: https://nodejs.org and install NodeJS. Make sure you can use the npm in command line
+2) Navigate to instahyreAPIs directory in terminal
 3) Run '$npm init' to install all the dependencies
-4) Run '$npm start' to start the project 
+4) Run '$npm start' to start the project
+
+The index/root file is app.js
+Alternatively you can run the application with the following commands:
+
+$nodemon app.js
+or
+$node app.js
 
 
 
@@ -25,5 +32,6 @@ WHEN TESTING/DEPLOYING:
     credentials:include
 
 2) If testing from a web-browser add
-3) When deploying edit /config/config.json. 
+3) When deploying edit /config/config.json according to the choice of
+database
     dialect: 'mysql'
