@@ -4,7 +4,7 @@ const sequelize=User.sequelize;
 //populate User and Password
 
 const populate_all_data=async ()=>{
-
+    try{
     var user1=await User.create({
         name:"anirudh",
         phone:"8919312196",
@@ -109,10 +109,10 @@ const populate_all_data=async ()=>{
         phone:"9885988500",
         email:null
     });
-
-
-
-
+    }
+    catch(error){
+        console.log('data already present');
+    }
     return "success";
 
 }
