@@ -5,13 +5,10 @@ const {getSavedPassword}=require('../Dao/credentialDao');
 const {spam_liklihood_calculator}=require('./searchService');
 const {getSpamHits}=require('../Dao/spamDao');
 
-const bcrypt=require('bcrypt');
-const jwt=require('jsonwebtoken');
-const dotenv=require('dotenv');
-dotenv.config();
+const {generateAccessToken,authenticateToken}=require('./authFunctions');
 
-//IMPORT THE TOKEN SECRET
-process.env.TOKEN_SECRET;
+const bcrypt=require('bcrypt');
+
 
 
 //REGISTERING A USER
@@ -23,45 +20,53 @@ const register_user=async (req,res)=>{
 
     var response_text="";
 
-    try{
-        //check if user already registered
-        const user = await userExists(user_details.phone);
+
+    //check if user already registered
+    const user = await userExists(user_details.phone);
 
         //if user not registered
-        if(user===null){ 
-            var mail=null;
-            if(user_details.hasOwnProperty('email') && user_details.email!==null)
-                mail=user_details.email;
-            try{
+    if(user===null){ 
 
-                //add_new_user dao called to add user
-                const created_user=await add_new_user({ 
-                    name:user_details.name,
-                    phone:user_details.phone,
-                    email:mail,
-                    password:user_details.password
-                });
+        //user may or may not provide mail
+        var mail=null;
+        if(user_details.hasOwnProperty('email') && user_details.email!==null)
+            mail=user_details.email;
+            
 
-                //registration logs in automatically
-                res.cookie('userid',created_user.user_id,{
-                    httpOnly:true,
-                    sameSite:'None',
-                    secure:false,
-                    maxAge:60000000
-                });
-                response_text="user added successfully";
-            }
-            catch(error){
-                console.log('Error occured while registering new user',err);
-                response_text="failed to save user details";
-            }
+        try{
+
+            //add_new_user dao called to register a user
+            const created_user=await add_new_user({ 
+                name:user_details.name,
+                phone:user_details.phone,
+                email:mail,
+                password:user_details.password
+           });
+
+            //registration logs in automatically=> create JWT
+            const accessToken=generateAccessToken({userid:created_user.user_id});
+            return res.json(accessToken);
+            // res.cookie('userid',accessToken,{
+            //     httpOnly:true,
+            //     sameSite:'None',
+            //     secure:false,
+            //     maxAge:60000000
+            // });  
+
+            //send the token
+            // return res.send("Registered and logged in successfully");
         }
-        else
-            response_text="phone number already present";
-    }
-    catch(err){console.log(err);}
-    res.send(response_text);
 
+        catch(error){
+            console.log("Error while registering new user:",error);
+            return res.send("Error while registering new user");
+        }
+           
+        
+    }
+
+    res.send("Phone number already exists.");
+  
 }
 
 //GET USER DETAILS ALONG WITH EMAIL IF POSSIBLE (SEARCH FUNCTIONALITY EXTENSION)
@@ -167,9 +172,7 @@ const logout_user=(req,res)=>{
 
 
 
-function generateAccessToken(userid){
-    return jwt.sign(userid, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
-}
+
 
 module.exports={
     register_user,
