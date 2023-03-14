@@ -6,7 +6,12 @@ const {spam_liklihood_calculator}=require('./searchService');
 const {getSpamHits}=require('../Dao/spamDao');
 
 const bcrypt=require('bcrypt');
+const jwt=require('jsonwebtoken');
+const dotenv=require('dotenv');
+dotenv.config();
 
+//IMPORT THE TOKEN SECRET
+process.env.TOKEN_SECRET;
 
 
 //REGISTERING A USER
@@ -158,6 +163,12 @@ const logout_user=(req,res)=>{
     res.clearCookie('userid');
 
     res.send("Please login to continue");
+}
+
+
+
+function generateAccessToken(userid){
+    return jwt.sign(userid, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
 }
 
 module.exports={
