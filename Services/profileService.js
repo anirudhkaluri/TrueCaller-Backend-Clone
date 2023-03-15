@@ -49,6 +49,56 @@ const register_user=async (req,res)=>{
   
 }
 
+
+
+
+
+//LOGGING IN A USER
+const login_user=async (req,res)=>{
+
+        
+    //retrieve posted data
+    const user_entered_credentials=req.body;
+    const user_entered_password=user_entered_credentials.password;
+    const user_phone=user_entered_credentials.phone;
+
+    try{
+
+        //check if user with that phone number exists
+        const user=await userExists(user_phone);
+
+        //if user exists see if the password is matching
+        if(user!==null){
+
+            //retrieve the hashed password
+            const hashed_password=await getSavedPassword(user.user_id);
+
+            //compare with user entered password
+            const result=bcrypt.compareSync(user_entered_password,hashed_password);
+
+            //if corect password is entered generate the token
+            if(result){
+
+                //generate token
+                const accessToken=generateAccessToken({userid:user.user_id});
+                
+                //send the token
+                return res.json(accessToken);
+            }
+            else
+                return res.send("Please enter the correct password");
+        }
+        
+    }
+    catch(err){
+        console.log(err);
+        return res.send("Error logging in");
+    }
+    res.send("Please register first");   
+}
+
+
+
 //GET USER DETAILS ALONG WITH EMAIL IF POSSIBLE (SEARCH FUNCTIONALITY EXTENSION)
 const get_user_along_with_email=async (req,res)=>{
    
@@ -92,51 +142,6 @@ const get_user_along_with_email=async (req,res)=>{
     res.json(json_response);
 
 }
-
-
-//LOGGING IN A USER
-const login_user=async (req,res)=>{
-
-        
-    //retrieve posted data
-    const user_entered_credentials=req.body;
-    const user_entered_password=user_entered_credentials.password;
-    const user_phone=user_entered_credentials.phone;
-
-    try{
-
-        //check if user with that phone number exists
-        const user=await userExists(user_phone);
-
-        //if user exists see if the password is matching
-        if(user!==null){
-
-            //retrieve the hashed password
-            const hashed_password=await getSavedPassword(user.user_id);
-
-            //compare with user entered password
-            const result=bcrypt.compareSync(user_entered_password,hashed_password);
-
-            //if corect password is entered generate the token
-            if(result){
-
-                //generate token
-                const accessToken=generateAccessToken({userid:user.user_id});
-                
-                //send the token
-                return res.json(accessToken);
-            }
-            else
-                return res.send("Please enter the correct password");
-        }
-        
-    }
-    catch(err){
-        console.log(err);
-    }
-    res.send("Please register first");   
-}
-
 
 
 module.exports={
