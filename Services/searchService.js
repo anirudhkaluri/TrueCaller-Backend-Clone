@@ -6,10 +6,7 @@ const {getSpamHits}=require('../Dao/spamDao');
 //SEARCH WITH A NAME
 const search_with_name=async (req,res)=>{
 
-    //Allow only if logged in
-    const cookieExists = req.cookies.userid !== undefined;
-    if(!cookieExists)
-        return res.send("Please login first");
+ 
 
     //the array which we will send
         var users_array=[];
@@ -34,7 +31,8 @@ const search_with_name=async (req,res)=>{
 
         //calculate spam liklihood and create populate array
         for(let i=0;i<all_entries.length;i++){
-            //calculate spam liklihood for each result
+
+            //calculate spam liklihood for each result. Returns Number of times a number is marked spam, total number of spam entries
             var spam_data=await getSpamHits(all_entries[i].phone);
             const spam_liklihood=spam_liklihood_calculator(spam_data.spam_hits,spam_data.spammers_count,total_registered_users);
             const user_object={"name":all_entries[i].name,"phone":all_entries[i].phone,"spam_liklihood":spam_liklihood};
@@ -120,14 +118,27 @@ const search_with_number=async (req,res)=>{
 }
 
 
+
 //Spam liklihood calculator
 const spam_liklihood_calculator=(spam_hits,spam_table_length,registered_users_count)=>{
 
+    //spam_hits= number of times a number is marked spam
+    //spam_table_length= total number of entries in spam table
+    //registered_useres_count=total number of users registered. Only registered users can mark numbers as spam
 
     //look into Documentation.pdf for the logic behind the formula
+    var spam_liklihood="";
     var weight1=(spam_hits/spam_table_length)*100;
     var weight2=(spam_hits/registered_users_count)*100;
-    return (weight1+weight2);
+    var total_weight=weight1+weight2;
+   
+    if(total_weight>=0 && total_weight<50)
+        return "Very Low";
+    if(total_weight>=50 && total_weight<100)
+        return "Low";
+    if(total_weight>=100 && total_weight<150)
+        return "Moderate";
+    return "High";
 }
 
 module.exports= { 

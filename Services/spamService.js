@@ -8,7 +8,6 @@ const add_spam_number=async (req,res)=>{
     //TO-DO : IF USER ALREADY MARKED A NUMBER AS SPAM, SHOULDNT ALLOW THEM TO DUPLICATE
     try{
         const user_id=req.user;
-        console.log("userid isssssssssssssssssssssssssssssssss",user_id);
         const spam_number=req.body.spam_number;
         await addSpamNumber(user_id,spam_number);
     }

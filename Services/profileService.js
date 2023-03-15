@@ -53,7 +53,7 @@ const register_user=async (req,res)=>{
 
 
 
-//LOGGING IN A USER
+//USER LOGIN
 const login_user=async (req,res)=>{
 
         
@@ -148,5 +148,4 @@ module.exports={
     register_user,
     get_user_along_with_email,
     login_user,
-    logout_user
 }
