@@ -25,7 +25,6 @@ const search_with_name=async (req,res)=>{
         //get number of users registered for calculating spam liklihood
         const total_registered_users=await getRegisteredUsersCount();
 
-        
 
         //calculate spam liklihood and create populate array
         for(let i=0;i<all_entries.length;i++){
@@ -67,19 +66,15 @@ const search_with_name=async (req,res)=>{
 //SEARCH WITH NUMBER FUNCTIONALITY
 const search_with_number=async (req,res)=>{
 
-    //Allow only if logged in
-    const cookieExists = req.cookies.userid !== undefined;
-    if(!cookieExists)
-        return res.send("Please login first");
-
-    let response_data;
+    //extract phone number from URL
+    const search_number=req.params.phone;
+  
     try{
-        //extract phone number from URL
-        const search_number=req.params.phone;
 
         //search if a user with that phone number is registered
         const user=await userExists(search_number);
         let users;
+        let spam_data;
         
         
         //get number of users registered for calculating spam liklihood
@@ -94,7 +89,7 @@ const search_with_number=async (req,res)=>{
 
             for(let i=0;i<users.length;i++){
                 //calculate spam liklihood for each result we got in the query
-                var spam_data=await getSpamHits(users[i].phone);
+                 spam_data=await getSpamHits(users[i].phone);
                 const spam_liklihood=spam_liklihood_calculator(spam_data.spam_hits,spam_data.spammers_count,total_registered_users);
                 
                 //create object
@@ -105,16 +100,15 @@ const search_with_number=async (req,res)=>{
             }
             response_data=users_array;
         }
-        //if a user with that phone number is registered
-        else{
+      
 
-            //find spam liklihood
-            const spam_data=await getSpamHits(user.phone);
-            const spam_liklihood=spam_liklihood_calculator(spam_data.spam_hits,spam_data.spammers_count,total_registered_users);
+        //find spam liklihood
+         spam_data=await getSpamHits(user.phone);
+        const spam_liklihood=spam_liklihood_calculator(spam_data.spam_hits,spam_data.spammers_count,total_registered_users);
 
-            //create object and assign response_data to it
-            response_data={"user_id":user.user_id,"name":user.name,"phone":user.phone,"spam_liklihood":spam_liklihood};
-        }
+        //create object and assign response_data to it
+        response_data={"user_id":user.user_id,"name":user.name,"phone":user.phone,"spam_liklihood":spam_liklihood};
+        
     }
     catch(err){
         console.log(err);

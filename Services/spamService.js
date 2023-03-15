@@ -1,18 +1,23 @@
 
-const {addSpamNumber}=require('../Dao/spamDao');
+const {addSpamNumber,check_duplicate_spam_entry}=require('../Dao/spamDao');
 
 const add_spam_number=async (req,res)=>{
 
 
-    
-    //TO-DO : IF USER ALREADY MARKED A NUMBER AS SPAM, SHOULDNT ALLOW THEM TO DUPLICATE
+
     try{
         const user_id=req.user;
         const spam_number=req.body.spam_number;
-        await addSpamNumber(user_id,spam_number);
+        //check if user already marked the number as spam
+        const spamExists=await check_duplicate_spam_entry(user_id,spam_number);
+        //if no entry is found
+        if(spamExists===false)
+            await addSpamNumber(user_id,spam_number);
+        else
+            return res.send("Spam number already saved");
     }
     catch(err){
-        console.log(err);
+        return res.send("Error while adding a number as a spam");
     }
 
     res.send("Saved spam number successfully");

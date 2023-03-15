@@ -12,7 +12,7 @@ const {populate_all_data}=require('./Data/populateData');
 
 app.use(cors({
     origin: [
-
+        
     ],
     credentials:true
   }));
@@ -37,6 +37,7 @@ app.use((req, res, next) => {
 
 
 
+
 const PORT= process.env.PORT||8000; 
 
 db.sequelize.sync()
@@ -51,7 +52,7 @@ db.sequelize.sync()
     console.log(err);
 });
 
-module.exports=app; //FOR TESTING
+module.exports=app; 
 
 
 

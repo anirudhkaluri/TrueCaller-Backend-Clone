@@ -2,6 +2,28 @@ const {SpamNumber}=require('../models');
 
 //TO DO INSERT TRY CATCH STATEMENTS
 
+//Adding a spam number by a user
+const addSpamNumber=async (userid,phone_number)=>{
+    const entry=await SpamNumber.create({
+                    user_id:userid,
+                    phone:phone_number
+    });
+}
+
+
+const check_duplicate_spam_entry=async(userid,phone_number)=>{
+    const entry=await SpamNumber.findOne({
+        where:{
+            user_id:userid,
+            phone:phone_number
+        }
+    });
+    if(entry)
+        return true;
+    return false;
+}
+
+
 //FOR spam_liklihood claculation
 const getSpamHits=async (phone_number)=>{
     
@@ -16,17 +38,13 @@ const getSpamHits=async (phone_number)=>{
 
 }
 
-//Adding a spam number by a user
-const addSpamNumber=async (userid,phone_number)=>{
-    const entry=await SpamNumber.create({
-                    user_id:userid,
-                    phone:phone_number
-                });
-}
+
+
 
 
 
 module.exports={
     getSpamHits,
-    addSpamNumber
+    addSpamNumber,
+    check_duplicate_spam_entry
 }
