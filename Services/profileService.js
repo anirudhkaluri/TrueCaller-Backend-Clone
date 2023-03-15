@@ -97,12 +97,6 @@ const get_user_along_with_email=async (req,res)=>{
 //LOGGING IN A USER
 const login_user=async (req,res)=>{
 
-    //check if already logged in
-    const cookieExists = req.cookies.userid !== undefined;
-    if(cookieExists)
-        return res.send("Please logout first");
-
-    var res_text="";
         
     //retrieve posted data
     const user_entered_credentials=req.body;
@@ -110,36 +104,37 @@ const login_user=async (req,res)=>{
     const user_phone=user_entered_credentials.phone;
 
     try{
+
         //check if user with that phone number exists
         const user=await userExists(user_phone);
 
-
-    
-
-        //if user if such phone number exists see if the password is matching
+        //if user exists see if the password is matching
         if(user!==null){
+
+            //retrieve the hashed password
             const hashed_password=await getSavedPassword(user.user_id);
+
+            //compare with user entered password
             const result=bcrypt.compareSync(user_entered_password,hashed_password);
+
+            //if corect password is entered generate the token
             if(result){
-                res_text="You have successfully logged in";
-                res.cookie('userid',user.user_id,{
-                    httpOnly:true,
-                    sameSite:'None',
-                    secure:false,
-                    maxAge:60000000
-                });  
+
+                //generate token
+                const accessToken=generateAccessToken({userid:user.user_id});
+                
+                //send the token
+                return res.json(accessToken);
             }
             else
-                res_text="You have entered incorrect password";          
+                return res.send("Please enter the correct password");
         }
-        else
-            res_text="Please register before you can login";
+        
     }
     catch(err){
         console.log(err);
     }
-    
-    res.send(res_text);
+    res.send("Please register first");   
 }
 
 
