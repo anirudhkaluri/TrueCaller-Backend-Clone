@@ -6,12 +6,10 @@ const {getSpamHits}=require('../Dao/spamDao');
 //SEARCH WITH A NAME
 const search_with_name=async (req,res)=>{
 
- 
-
     //the array which we will send
-        var users_array=[];
+    var search_results=[];
     
-    //Extract the Name/search-term
+    //Extract the Name/search-term from request object
     const search_term=req.params.name;
 
     try{
@@ -21,7 +19,7 @@ const search_with_name=async (req,res)=>{
         //get data from PersonalContacts table
         const contact_table_entries=await search_name_in_contacts(search_term);
 
-        //combine all the results
+        //combine all the data from both tables
         const all_entries=[...user_table_entries,...contact_table_entries];
 
         //get number of users registered for calculating spam liklihood
@@ -32,18 +30,25 @@ const search_with_name=async (req,res)=>{
         //calculate spam liklihood and create populate array
         for(let i=0;i<all_entries.length;i++){
 
-            //calculate spam liklihood for each result. Returns Number of times a number is marked spam, total number of spam entries
+            //Get Spam Data for each data entry
             var spam_data=await getSpamHits(all_entries[i].phone);
-            const spam_liklihood=spam_liklihood_calculator(spam_data.spam_hits,spam_data.spammers_count,total_registered_users);
-            const user_object={"name":all_entries[i].name,"phone":all_entries[i].phone,"spam_liklihood":spam_liklihood};
+
+            //Number of times user marked as spam
+            const spam_hits=spam_data.spam_hits;
+            //Total number of Entries in spam table
+            const spam_table_length=spam_data.spammers_count;
+            //Caculate spam liklihood
+            const spam_liklihood=spam_liklihood_calculator(spam_hits,spam_table_length,total_registered_users);
+
+            const search_entry={"name":all_entries[i].name,"phone":all_entries[i].phone,"spam_liklihood":spam_liklihood};
 
             //add the result into the response array
-            users_array[i]=user_object;
+            search_results[i]=search_entry;
         }
 
-        //sort such that those entries whose name starts with a prefix comes first
+        //sort search results such that those entries whose name starts with a prefix comes first
         //define a comparator for custom sorting
-        users_array.sort((a,b)=>{
+        search_results.sort((a,b)=>{
             if(a.name.startsWith(`${search_term}`) && !b.name.startsWith(`${search_term}`))
                 return -1;
             else if (a.name.startsWith(`${search_term}`) && !b.name.startsWith(`${search_term}`))
@@ -55,7 +60,7 @@ const search_with_name=async (req,res)=>{
         console.log(err);
     }
 
-    res.json(users_array);
+    res.json(search_results);
 }
 
 
