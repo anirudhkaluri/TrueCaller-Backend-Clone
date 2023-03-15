@@ -18,20 +18,11 @@ const register_user=async (req,res)=>{
     //req.body has new user details
     const user_details=req.body; 
 
-    var response_text="";
-
-
     //check if user already registered
     const user = await userExists(user_details.phone);
 
-        //if user not registered
+    //if user not registered
     if(user===null){ 
-
-        //user may or may not provide mail
-        var mail=null;
-        if(user_details.hasOwnProperty('email') && user_details.email!==null)
-            mail=user_details.email;
-            
 
         try{
 
@@ -39,30 +30,19 @@ const register_user=async (req,res)=>{
             const created_user=await add_new_user({ 
                 name:user_details.name,
                 phone:user_details.phone,
-                email:mail,
+                email:user_details.email,
                 password:user_details.password
            });
 
             //registration logs in automatically=> create JWT
             const accessToken=generateAccessToken({userid:created_user.user_id});
             return res.json(accessToken);
-            // res.cookie('userid',accessToken,{
-            //     httpOnly:true,
-            //     sameSite:'None',
-            //     secure:false,
-            //     maxAge:60000000
-            // });  
-
-            //send the token
-            // return res.send("Registered and logged in successfully");
         }
 
         catch(error){
             console.log("Error while registering new user:",error);
             return res.send("Error while registering new user");
-        }
-           
-        
+        }    
     }
 
     res.send("Phone number already exists.");
@@ -161,16 +141,6 @@ const login_user=async (req,res)=>{
     
     res.send(res_text);
 }
-
-//logout user
-const logout_user=(req,res)=>{
-    //clear the cookie.
-    res.clearCookie('userid');
-
-    res.send("Please login to continue");
-}
-
-
 
 
 

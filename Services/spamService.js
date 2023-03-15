@@ -3,12 +3,9 @@ const {addSpamNumber}=require('../Dao/spamDao');
 
 const add_spam_number=async (req,res)=>{
 
-    //Check if User logged In 
-    // const cookieExists = req.cookies.userid !== undefined;
-    // if(!cookieExists)
-    //     return res.send("Please login first");
+
     
-     //TO-DO : IF USER ALREADY MARKED A NUMBER AS SPAM, SHOULDNT ALLOW THEM TO DUPLICATE
+    //TO-DO : IF USER ALREADY MARKED A NUMBER AS SPAM, SHOULDNT ALLOW THEM TO DUPLICATE
     try{
         const user_id=req.user;
         console.log("userid isssssssssssssssssssssssssssssssss",user_id);
